@@ -1,0 +1,63 @@
+#!/bin/bash
+
+## Author: William Dole
+## Class: CIS 140
+## Assignment: Project 6
+## Purpose: Bash script that makes arrays to separate data in a csv file
+
+declare -a lastNames
+declare -a firstNames
+declare -a addresses
+declare -a cities
+declare -a states
+declare -a zips
+declare -ai ages
+
+main () {
+        clear
+        populateArrays
+        findSocialSecurityAge
+        clear
+}
+
+populateArrays () {
+        declare inFile="$HOME/data2.csv"
+        declare OLDIFS=$IFS
+        IFS="," #https://www.cyberciti.biz/faq/unix-linux-bash-read-comma-separated-cvsfile/
+        declare -i lineNumber=0
+        while read lastName firstName address city state zip age
+        do
+                lastNames[$lineNumber]=$lastName
+                firstNames[$lineNumber]=$firstName
+                addresses[$lineNumber]=$address
+                cities[$lineNumber]=$city
+                states[$lineNumber]=$state
+                zips[$lineNumber]=$zip
+                ages[$lineNumber]=$age
+                (( lineNumber++ ))
+        done < $inFile
+        IFS=$OLDIFS
+        echo "Arrays are populated."
+        echo ""
+        echo "Press enter to continue."
+        read
+        clear
+}
+
+findSocialSecurityAge () {
+        declare ssa
+        declare -ir minSsa=61
+        declare -ir ROWS=8
+        for (( i=0; $i < ${#ages[@]}; i++ )) {
+                if [ ${ages[$i]} -gt $minSsa ]
+                then
+                        (( ssa++ ))
+                fi
+        }
+        echo "There are $ssa employees able to collect social security."
+        echo ""
+        echo "Press enter to exit."
+        read
+}
+
+main
